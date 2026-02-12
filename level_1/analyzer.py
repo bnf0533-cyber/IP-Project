@@ -15,7 +15,7 @@ def check_night_activity(night_data):
 # print(check_night_activity(x))
 
 def identify_suspicions_per_ip(data):
-    ext_ips = {row[1] for row in get_external_ips(data)}
+    ext_ips = set(get_external_ips(data))
     sens_ips = {row[1] for row in filter_by_sensitive_ports(data)}
     large_ips = {row[1] for row in checks_size(data)}
     night_ips = {row[1] for row in check_night_activity(data)}
@@ -32,3 +32,9 @@ def identify_suspicions_per_ip(data):
         for ip in unique_ips
     }
 # print(identify_suspicions_per_ip(x))
+
+def filter_high_risk_ips(suspicions_dict):
+    return {ip: tags for ip, tags in suspicions_dict.items()if len(tags) >= 2}
+all_data = identify_suspicions_per_ip(x)
+final_filtered_data = {ip: tags for ip, tags in all_data.items() if len(tags) >= 2}
+print(final_filtered_data)
