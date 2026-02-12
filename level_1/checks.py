@@ -14,3 +14,5 @@ def checks_size(data_size):
 def tag_traffic(data_row):
     return [[row[1] + " LARGE"] if int(row[5]) > 5000 else [row[1] +" NORMAL"] for row in data_row]
 print(tag_traffic(x))
+
+def

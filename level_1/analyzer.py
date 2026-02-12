@@ -9,3 +9,7 @@ all_ips = count_requests_by_ip(x)
 def map_port_to_protocol(data):
     return {int(row[3]): row[4] for row in data}
 print(map_port_to_protocol(x))
+
+def check_night_activity(night_data):
+    return [line[0] for line in night_data if line[0].split()[1].startswith(("00","01","02","03","04","05"))]
+print(check_night_activity(x))
