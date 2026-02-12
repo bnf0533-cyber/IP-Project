@@ -11,13 +11,24 @@ def map_port_to_protocol(data):
 # print(map_port_to_protocol(x))
 
 def check_night_activity(night_data):
-    return [line[0] for line in night_data if line[0].split()[1].startswith(("00","01","02","03","04","05"))]
+    return [line for line in night_data if line[0].split()[1].startswith(("00", "01", "02", "03", "04", "05"))]
 # print(check_night_activity(x))
 
 def identify_suspicions_per_ip(data):
-    ext_ips = get_external_ips(data)
-    sens_ips = [row[1] for row in filter_by_sensitive_ports(data)]
-    unique_ips = set([row[1] for row in data])
-    return {ip: [tag for condition, tag in [(ip in ext_ips, "EXTERNAL_IP"),(ip in sens_ips, "SENSITIVE_PORT")]if condition]for ip in unique_ips}
-print(identify_suspicions_per_ip(x))
-
+    ext_ips = {row[1] for row in get_external_ips(data)}
+    sens_ips = {row[1] for row in filter_by_sensitive_ports(data)}
+    large_ips = {row[1] for row in checks_size(data)}
+    night_ips = {row[1] for row in check_night_activity(data)}
+    unique_ips = {row[1] for row in data}
+    return {
+        ip: [
+            tag for condition, tag in [
+                (ip in ext_ips, "EXTERNAL_IP"),
+                (ip in sens_ips, "SENSITIVE_PORT"),
+                (ip in large_ips, "LARGE_PACKET"),
+                (ip in night_ips, "NIGHT_ACTIVITY")
+            ] if condition
+        ]
+        for ip in unique_ips
+    }
+# print(identify_suspicions_per_ip(x))
